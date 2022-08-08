@@ -1,10 +1,10 @@
 --[[
 
-Created by ScriptIntelligence
+Developers: ScriptIntelligence (MainModule & loader), ShaneSloth (Robase)
 Started January 2nd, 2021 (MainModule Version)
 V2 Started August 7th, 2022 (Firebase Version)
 
-Property of Alpha Authority
+Dedicated by ScriptIntelligence to Alpha Authority, while using opensource technology by ShaneSloth
 
 ]]
 
