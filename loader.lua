@@ -6,6 +6,8 @@ V2 Started August 7th, 2022 (Firebase Version)
 
 Dedicated by ScriptIntelligence to Alpha Authority, while using opensource technology by ShaneSloth
 
+Robase: https://devforum.roblox.com/t/robase-a-luau-wrapper-for-firebase-real-time-database/1315668
+
 ]]
 
 
