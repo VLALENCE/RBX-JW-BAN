@@ -3,6 +3,7 @@
 Developers: ScriptIntelligence (MainModule & loader), ShaneSloth (Robase)
 Started January 2nd, 2021 (MainModule Version)
 V2 Started August 7th, 2022 (Firebase Version)
+V3 Started May 27, 2024 (Secrets & Firebase Version)
 
 Dedicated by ScriptIntelligence to Alpha Authority, while using opensource technology by ShaneSloth
 
@@ -10,11 +11,6 @@ Robase: https://devforum.roblox.com/t/robase-a-luau-wrapper-for-firebase-real-ti
 
 ]]
 
---[[
-
--- Redacted -- Internal processing instructions for Robase authorization hidden. 
-
-]]
 
 --
 
@@ -28,13 +24,14 @@ warn(script.Name .. ' ~ Starting Blacklist / Whitelist Main Module')
 
 local PlayerService = game:GetService('Players')
 local GroupService = game:GetService('GroupService')
--- Redacted -- Internal processing service for Robase authorization hidden.  
+local HttpService = game:GetService('HttpService')
 
 --
 
--- Redacted -- Internal processing for Robase authorization hidden.  
+local URL = tostring(HttpService:GetSecret(''))
+local TOKEN = tostring(HttpService:GetSecret(''))
 local RobaseServiceModule = require(script.RobaseService) 
-local RobaseService = RobaseServiceModule.new(--[[Redacted]]) -- Internal processing for Robase authorization hidden. 
+local RobaseService = RobaseServiceModule.new(URL, TOKEN) 
 
 local RobaseUserBlacklist = RobaseService:GetRobase('blacklist')
 local RobaseUserWhitelist = RobaseService:GetRobase('whitelist')
@@ -50,12 +47,10 @@ end
 
 local function checkBlacklist(Player)
 	print(script.Name .. ' ~ Checking Blacklist for ' .. Player.Name)
-	--if table.find(Blacklist.Players, Player.UserId) then return true end
 	local Success, RobaseUserBlacklistUsers = RobaseUserBlacklist:GetAsync("users")
 	for _,User in pairs(RobaseUserBlacklistUsers) do
 		if User['userId'] == Player.UserId then return true end
 	end
-	--for _,Group in ipairs(Blacklist.Groups) do
 	local Success, RobaseUserBlacklistGroups = RobaseUserBlacklist:GetAsync("groups")
 	for _,Group in pairs(RobaseUserBlacklistGroups) do
 		if Player:IsInGroup(Group['groupId']) then return true end
@@ -64,12 +59,10 @@ end
 
 local function checkWhitelist(Player)
 	print(script.Name .. ' ~ Checking Whitelist for ' .. Player.Name)
-	--if table.find(Whitelist.Players, Player.UserId) then print(script.Name .. ' ~ ' .. Player.Name .. ' is Whitelisted.') return true end
 	local Success, RobaseUserWhitelistUsers = RobaseUserWhitelist:GetAsync("users")
 	for _,User in pairs(RobaseUserWhitelistUsers) do
 		if User['userId'] == Player.UserId then print(script.Name .. ' ~ ' .. Player.Name .. ' is Whitelisted.') return true end
 	end
-	--for _,Group in ipairs(Whitelist.Groups) do
 	local Success, RobaseUserWhitelistGroups = RobaseUserWhitelist:GetAsync("groups")
 	for _,Group in pairs(RobaseUserWhitelistGroups) do
 		if Player:IsInGroup(Group['groupId']) then print(script.Name .. ' ~ ' .. Player.Name .. ' is Whitelisted.') return true end
