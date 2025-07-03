@@ -6,7 +6,7 @@ V2 Started August 7th, 2022 (Firebase Version)
 V3 Started May 27, 2024 (Secrets & Firebase Version)
 V4.0 Started July 3, 2025 (Github Version)
 
-Dedicated by ScriptIntelligence to Alpha Authority
+Dedicated by ScriptIntelligence to Trenati
 
 ]]
 
@@ -15,17 +15,19 @@ Dedicated by ScriptIntelligence to Alpha Authority
 
 script.Name = 'Blacklist / Whitelist Main Module'
 
+
 -- 
 
 warn(script.Name .. ' ~ Starting Blacklist / Whitelist Main Module')
 
---
 
+--
 
 local PlayerService = game:GetService('Players')
 local GroupService = game:GetService('GroupService')
 local DataStoreService = game:GetService('DataStoreService') 
 local HttpService = game:GetService('HttpService')
+
 
 --
 
@@ -33,7 +35,6 @@ local URL = "https://raw.githubusercontent.com/TRENATTI/WRITTEN/refs/heads/main/
 local URL_Encoded = HttpService:GetAsync(URL)
 local URL_Decoded = HttpService:JSONDecode(URL_Encoded)
 
---
 
 --
 
@@ -60,6 +61,7 @@ local function writePlayer(player:Player)
 		return PlayerService:BanAsync(config)
 	end)
 	print(success, err)
+	warn(script.Name .. ' ~ Banned ' .. player.Name .. ", blacklisted groups. ["..groups']')
 end
 
 local function checkGroupBlacklist(player:Player)
@@ -83,11 +85,11 @@ local function getGroupsBlacklisted(player:Player)
 	return group_table
 end
 
-
 local function kickPlayer(player:Player, groups)
 	player:Kick('In Blacklisted Groups! ['..groups..']')
-	warn(script.Name .. ' ~ Kicked ' .. player.Name .. ", blacklisted groups. ["..groups'`')
+	warn(script.Name .. ' ~ Kicked ' .. player.Name .. ", blacklisted groups. ["..groups']')
 end
+
 
 --
 
@@ -101,6 +103,7 @@ local function checkPlayer(newPlayer:Player)
 	print(script.Name .. ' ~ Checked Permanent Blacklist and Group Blacklist for ' .. newPlayer.Name .. ', cleared.')
 end
 
+
 --
 
 local function intiliaze()
@@ -111,6 +114,7 @@ local function intiliaze()
 		checkPlayer(player)
 	end    
 end
+
 
 --
 
