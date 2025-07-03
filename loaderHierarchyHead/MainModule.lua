@@ -4,10 +4,9 @@ Developers: ScriptIntelligence (MainModule & loader), ShaneSloth (Robase)
 Started January 2nd, 2021 (MainModule Version)
 V2 Started August 7th, 2022 (Firebase Version)
 V3 Started May 27, 2024 (Secrets & Firebase Version)
+V4.0 Started July 3, 2025 (Github Version)
 
-Dedicated by ScriptIntelligence to Alpha Authority, while using opensource technology by ShaneSloth
-
-Robase: https://devforum.roblox.com/t/robase-a-luau-wrapper-for-firebase-real-time-database/1315668
+Dedicated by ScriptIntelligence to Alpha Authority
 
 ]]
 
@@ -22,59 +21,84 @@ warn(script.Name .. ' ~ Starting Blacklist / Whitelist Main Module')
 
 --
 
+
 local PlayerService = game:GetService('Players')
 local GroupService = game:GetService('GroupService')
+local DataStoreService = game:GetService('DataStoreService') 
 local HttpService = game:GetService('HttpService')
 
 --
 
-local URL = tostring(HttpService:GetSecret(''))
-local TOKEN = tostring(HttpService:GetSecret(''))
-local RobaseServiceModule = require(script.RobaseService) 
-local RobaseService = RobaseServiceModule.new(URL, TOKEN) 
-
-local RobaseUserBlacklist = RobaseService:GetRobase('blacklist')
-local RobaseUserWhitelist = RobaseService:GetRobase('whitelist')
+local URL = "https://raw.githubusercontent.com/TRENATTI/WRITTEN/refs/heads/main/LISTING/index.json"
+local URL_Encoded = HttpService:GetAsync(URL)
+local URL_Decoded = HttpService:JSONDecode(URL_Encoded)
 
 --
 
-local function kickPlayer(Player)
-	Player:Kick('Blacklisted!')
-	warn(script.Name .. ' ~ Kicked ' .. Player.Name .. ", blacklisted individual.")
+--
+
+local function checkPermanentBlacklist(player:Player)
+	local users = URL_Decoded["users"]
+	for user,data in pairs(users) do
+		if string.find(data.associatedAccounts.robloxAccounts, tostring(player.UserId)) then
+			return true
+		end
+	end
+	return false
+end
+
+local function writePlayer(player:Player)
+	local config: BanConfigType = {
+		UserIds = { player.UserId },
+		Duration = -1,
+		DisplayReason = "WRITEN.",
+		PrivateReason = "",
+		ExcludeAltAccounts = false,
+		ApplyToUniverse = true,
+	}
+	local success, err = pcall(function()
+		return PlayerService:BanAsync(config)
+	end)
+	print(success, err)
+end
+
+local function checkGroupBlacklist(player:Player)
+	local groups = URL_Decoded["groups"]
+	for group,data in pairs(groups) do
+		if player:IsInGroup(data.groupId) then
+			return true
+		end
+	end
+	return false
+end
+
+local function getGroupsBlacklisted(player:Player)
+	local groups = URL_Decoded["groups"]
+	group_table = ""
+	for group,data in pairs(groups) do
+		if player:IsInGroup(data.groupId) then
+			group_table += data.groupId..", "
+		end
+	end
+	return group_table
+end
+
+
+local function kickPlayer(player:Player, groups)
+	player:Kick('In Blacklisted Groups! ['..groups..']')
+	warn(script.Name .. ' ~ Kicked ' .. player.Name .. ", blacklisted groups. ["..groups'`')
 end
 
 --
 
-local function checkBlacklist(Player)
-	print(script.Name .. ' ~ Checking Blacklist for ' .. Player.Name)
-	local Success, RobaseUserBlacklistUsers = RobaseUserBlacklist:GetAsync("users")
-	for _,User in pairs(RobaseUserBlacklistUsers) do
-		if User['userId'] == Player.UserId then return true end
+local function checkPlayer(newPlayer:Player)
+	if checkPermanentBlacklist(newPlayer) then writePlayer(newPlayer) return end
+	if checkGroupBlacklist(newPlayer) then 
+		local groups = getGroupsBlacklisted(newPlayer)
+		kickPlayer(newPlayer, groups) 
+		return 
 	end
-	local Success, RobaseUserBlacklistGroups = RobaseUserBlacklist:GetAsync("groups")
-	for _,Group in pairs(RobaseUserBlacklistGroups) do
-		if Player:IsInGroup(Group['groupId']) then return true end
-	end
-end
-
-local function checkWhitelist(Player)
-	print(script.Name .. ' ~ Checking Whitelist for ' .. Player.Name)
-	local Success, RobaseUserWhitelistUsers = RobaseUserWhitelist:GetAsync("users")
-	for _,User in pairs(RobaseUserWhitelistUsers) do
-		if User['userId'] == Player.UserId then print(script.Name .. ' ~ ' .. Player.Name .. ' is Whitelisted.') return true end
-	end
-	local Success, RobaseUserWhitelistGroups = RobaseUserWhitelist:GetAsync("groups")
-	for _,Group in pairs(RobaseUserWhitelistGroups) do
-		if Player:IsInGroup(Group['groupId']) then print(script.Name .. ' ~ ' .. Player.Name .. ' is Whitelisted.') return true end
-	end
-end
-
---
-
-local function checkPlayer(Player)
-	if checkWhitelist(Player) == true then return end
-	if checkBlacklist(Player) == true then kickPlayer(Player) return end
-	print(script.Name .. ' ~ Checked Whitelist and Blacklist for ' .. Player.Name .. ', clear.')
+	print(script.Name .. ' ~ Checked Permanent Blacklist and Group Blacklist for ' .. newPlayer.Name .. ', cleared.')
 end
 
 --
