@@ -39,20 +39,15 @@ local users = URL_Decoded["users"]
 for user,data in pairs(users) do
 	local datatable = data.associatedAccounts.robloxAccounts:split(", ")
 	for index,userId in pairs(datatable) do
-		print(userId)
 		local yippee = false
 		repeat 
 			local history:BanHistoryPages = nil
 			local success, err = pcall(function()
 				history = PlayerService:GetBanHistoryAsync(userId)
-			end)
-			print(success, err)			
+			end)	
 			if success then
-
-				print(#history:GetCurrentPage())
 				if #history:GetCurrentPage() < 1 then
 					local newUserId = tonumber(userId)
-					print(newUserId)
 					local config: BanConfigType = {
 						UserIds = { newUserId },
 						Duration = -1,
@@ -64,7 +59,6 @@ for user,data in pairs(users) do
 					local success2, err2 = pcall(function()
 						return PlayerService:BanAsync(config)
 					end)
-					print(success2, err2)
 					if success2 then
 						warn(script.Name .. ' ~ Permanently Banned ' .. data.latestUsername ..`[`..userId..`]`)
 						yippee = true
@@ -102,8 +96,9 @@ local function writePlayer(player:Player)
 	local success, err = pcall(function()
 		return PlayerService:BanAsync(config)
 	end)
-	print(success, err)
-	warn(script.Name .. ' ~ Permanently Banned ' .. player.Name)
+	if success then
+		warn(script.Name .. ' ~ Permanently Banned ' .. player.Name)
+	end
 end
 
 local function checkGroupBlacklist(player:Player)
