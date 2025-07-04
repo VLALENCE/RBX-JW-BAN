@@ -23,9 +23,9 @@ warn(script.Name .. ' ~ Starting Blacklist / Whitelist Main Module')
 
 --
 
+local RuntimeService = game:GetService("RunService")
 local PlayerService = game:GetService('Players')
 local GroupService = game:GetService('GroupService')
-local DataStoreService = game:GetService('DataStoreService') 
 local HttpService = game:GetService('HttpService')
 
 
@@ -34,6 +34,48 @@ local HttpService = game:GetService('HttpService')
 local URL = "https://raw.githubusercontent.com/TRENATTI/WRITTEN/refs/heads/main/LISTING/index.json"
 local URL_Encoded = HttpService:GetAsync(URL)
 local URL_Decoded = HttpService:JSONDecode(URL_Encoded)
+
+local users = URL_Decoded["users"]
+for user,data in pairs(users) do
+	local datatable = data.associatedAccounts.robloxAccounts:split(", ")
+	for index,userId in pairs(datatable) do
+		print(userId)
+		local yippee = false
+		repeat 
+			local history:BanHistoryPages = nil
+			local success, err = pcall(function()
+				history = PlayerService:GetBanHistoryAsync(userId)
+			end)
+			print(success, err)			
+			if success then
+
+				print(#history:GetCurrentPage())
+				if #history:GetCurrentPage() < 1 then
+					local newUserId = tonumber(userId)
+					print(newUserId)
+					local config: BanConfigType = {
+						UserIds = { newUserId },
+						Duration = -1,
+						DisplayReason = "WRITEN.",
+						PrivateReason = "",
+						ExcludeAltAccounts = false,
+						ApplyToUniverse = true,
+					}
+					local success2, err2 = pcall(function()
+						return PlayerService:BanAsync(config)
+					end)
+					print(success2, err2)
+					if success2 then
+						warn(script.Name .. ' ~ Permanently Banned ' .. data.latestUsername ..`[`..userId..`]`)
+						yippee = true
+					end
+				else
+					yippee = true
+				end
+			end
+		until yippee == true or RuntimeService:IsStudio()
+	end
+end
 
 
 --
@@ -61,7 +103,7 @@ local function writePlayer(player:Player)
 		return PlayerService:BanAsync(config)
 	end)
 	print(success, err)
-	warn(script.Name .. ' ~ Banned ' .. player.Name .. ", blacklisted groups. ["..groups']')
+	warn(script.Name .. ' ~ Permanently Banned ' .. player.Name)
 end
 
 local function checkGroupBlacklist(player:Player)
