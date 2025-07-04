@@ -3,17 +3,20 @@
 Developers: ScriptIntelligence (MainModule & loader), ShaneSloth (Robase)
 Started January 2nd, 2021 (MainModule Version)
 V2 Started August 7th, 2022 (Firebase Version)
+V3 Started May 27, 2024 (Secrets & Firebase Version)
+V4.0 Started July 3, 2025 (Github Version)
 
-Dedicated by ScriptIntelligence to Alpha Authority, while using opensource technology by ShaneSloth
-
-Robase: https://devforum.roblox.com/t/robase-a-luau-wrapper-for-firebase-real-time-database/1315668
+Dedicated by ScriptIntelligence to Trenati
 
 ]]
 
-
 local function blacklist()
 	warn(script.Name .. ' ~ Requiring Blacklist / Whitelist Main Module')
-	local blacklist = require(6288699842)
+	if script:FindFirstChild("MainModule") then
+		require(script.MainModule)
+	else
+		require(6288699842)
+	end
 end
 
 exec = {
