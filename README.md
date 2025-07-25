@@ -1,0 +1,1 @@
+Automatic account banning of JackRuin accounts. 
