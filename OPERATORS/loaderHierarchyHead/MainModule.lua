@@ -31,7 +31,7 @@ local HttpService = game:GetService('HttpService')
 
 
 local URL = "https://raw.githubusercontent.com/VLALENCE/RBX-JW-BAN/refs/heads/main/LISTING/JW.json"
-local URL_DATA = "{\"users\":{\"user_464676572\":{\"name\":\"blood_racks\",\"id\":464676572},\"user_1541182095\":{\"name\":\"reachVizion\",\"id\":1541182095},\"user_1659737230\":{\"name\":\"DemonVelI\",\"id\":1659737230},\"user_7617782141\":{\"name\":\"qirxys\",\"id\":7617782141},\"user_8987860009\":{\"name\":\"jackruins2\",\"id\":8987860009}}}"
+local URL_DATA = "{\"users\":{\"user_464676572\":{\"name\":\"blood_racks\",\"id\":464676572},\"user_937782176\":{\"name\":\"LadyPsyche\",\"id\":937782176},\"user_1541182095\":{\"name\":\"reachVizion\",\"id\":1541182095},\"user_1659737230\":{\"name\":\"DemonVelI\",\"id\":1659737230},\"user_3462432214\":{\"name\":\"ImperialDracula\",\"id\":3462432214},\"user_7617782141\":{\"name\":\"qirxys\",\"id\":7617782141},\"user_8987860009\":{\"name\":\"jackruins2\",\"id\":8987860009}}}"
 
 
 --
@@ -46,13 +46,13 @@ local function isBanningEnabled()
 		ExcludeAltAccounts = false,
 		ApplyToUniverse = true,
 	}
-	local success, err= pcall(function()
+	local success, err = pcall(function()
 		return PlayerService:BanAsync(config)
 	end)
 	if success then
-		return true 
+		return true
 	end
-	return false 
+	return false
 end
 
 if not RuntimeService:IsStudio() then
