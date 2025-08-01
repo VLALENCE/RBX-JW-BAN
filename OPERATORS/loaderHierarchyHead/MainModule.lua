@@ -36,81 +36,113 @@ local URL_DATA = "{\"users\":{\"user_464676572\":{\"name\":\"blood_racks\",\"id\
 
 --
 
-if HttpService.HttpEnabled then
-	local URL_Encoded = HttpService:GetAsync(URL)
-	local URL_Decoded = HttpService:JSONDecode(URL_Encoded)
+local function isBanningEnabled()
+	local newUserId = tonumber(1)
+	local config: BanConfigType = {
+		UserIds = { newUserId },
+		Duration = 1,
+		DisplayReason = "BANNINGENABLED.",
+		PrivateReason = "",
+		ExcludeAltAccounts = false,
+		ApplyToUniverse = true,
+	}
+	local success, err= pcall(function()
+		return PlayerService:BanAsync(config)
+	end)
+	if success then
+		return true 
+	end
+	return false 
+end
 
-	local users = URL_Decoded["users"]
-	for user,data in pairs(users) do
-		local yippee = false
-		repeat 
-			local history:BanHistoryPages = nil
-			local success, err = pcall(function()
-				history = PlayerService:GetBanHistoryAsync(tonumber(data.id))
-			end)	
-			if success then
-				if #history:GetCurrentPage() < 1 then
-					local newUserId = tonumber(data.id)
-					local config: BanConfigType = {
-						UserIds = { newUserId },
-						Duration = -1,
-						DisplayReason = "JACKRUIN.",
-						PrivateReason = "",
-						ExcludeAltAccounts = false,
-						ApplyToUniverse = true,
-					}
-					local success2, err2 = pcall(function()
-						return PlayerService:BanAsync(config)
-					end)
-					if success2 then
-						warn(script.Name .. ` ~ Permanently Banned ` .. data.name .. ` [`..data.id..`]`)
-						yippee = true
+if not RuntimeService:IsStudio() then
+	if isBanningEnabled() then 
+		warn(script.Name .. ' ~ BanAsync is Enabled; Banning JW from experience permanently.')
+		if HttpService.HttpEnabled then
+			warn(script.Name .. ' ~ HttpService is Enabled; Banning JW via HTTPService from linked URL.')
+			local URL_Encoded = HttpService:GetAsync(URL)
+			local URL_Decoded = HttpService:JSONDecode(URL_Encoded)
+
+			local users = URL_Decoded["users"]
+			for user,data in pairs(users) do
+				local yippee = false
+				repeat 
+					local history:BanHistoryPages = nil
+					local success, err = pcall(function()
+						history = PlayerService:GetBanHistoryAsync(tonumber(data.id))
+					end)	
+					if success then
+						if #history:GetCurrentPage() < 1 then
+							local newUserId = tonumber(data.id)
+							local config: BanConfigType = {
+								UserIds = { newUserId },
+								Duration = -1,
+								DisplayReason = "JACKRUIN.",
+								PrivateReason = "",
+								ExcludeAltAccounts = false,
+								ApplyToUniverse = true,
+							}
+							local success2, err2 = pcall(function()
+								return PlayerService:BanAsync(config)
+							end)
+							if success2 then
+								warn(script.Name .. ` ~ Permanently Banned ` .. data.name .. ` [`..data.id..`]`)
+								yippee = true
+							end
+						else
+							yippee = true
+						end
 					end
-				else
-					yippee = true
-				end
+				until yippee == true or RuntimeService:IsStudio()
 			end
-		until yippee == true or RuntimeService:IsStudio()
+			warn(script.Name .. ` ~ All JW Accounts are Permanently Banned.`)
+		else
+			warn(script.Name .. ' ~ HttpService is Disabled; Banning JW via Preprogrammed Accounts in this Script')
+			local users = HttpService:JSONDecode(URL_DATA).users
+			for user,data in pairs(users) do
+				local yippee = false
+				repeat 
+					local history:BanHistoryPages = nil
+					local success, err = pcall(function()
+						history = PlayerService:GetBanHistoryAsync(tonumber(data.id))
+					end)	
+					if success then
+						if #history:GetCurrentPage() < 1 then
+							local newUserId = tonumber(data.id)
+							local config: BanConfigType = {
+								UserIds = { newUserId },
+								Duration = -1,
+								DisplayReason = "JACKRUIN.",
+								PrivateReason = "",
+								ExcludeAltAccounts = false,
+								ApplyToUniverse = true,
+							}
+							local success2, err2 = pcall(function()
+								return PlayerService:BanAsync(config)
+							end)
+							if success2 then
+								warn(script.Name .. ` ~ Permanently Banned ` .. data.name .. ` [`..data.id..`]`)
+								yippee = true
+							end
+							if err2 then
+								print(err2)
+							end
+						else
+							yippee = true
+						end
+					end
+					if err then 
+						print(err)
+					end
+				until yippee == true or RuntimeService:IsStudio()
+			end
+			warn(script.Name .. ` ~ All JW Accounts are Permanently Banned.`)
+		end
+	else
+		warn(script.Name .. ' ~ BanAsync is Disabled; Kicking JW from experience instead.')
 	end
 else
-	local users = HttpService:JSONDecode(URL_DATA).users
-	for user,data in pairs(users) do
-		local yippee = false
-		repeat 
-			local history:BanHistoryPages = nil
-			local success, err = pcall(function()
-				history = PlayerService:GetBanHistoryAsync(tonumber(data.id))
-			end)	
-			if success then
-				if #history:GetCurrentPage() < 1 then
-					local newUserId = tonumber(data.id)
-					local config: BanConfigType = {
-						UserIds = { newUserId },
-						Duration = -1,
-						DisplayReason = "JACKRUIN.",
-						PrivateReason = "",
-						ExcludeAltAccounts = false,
-						ApplyToUniverse = true,
-					}
-					local success2, err2 = pcall(function()
-						return PlayerService:BanAsync(config)
-					end)
-					if success2 then
-						warn(script.Name .. ` ~ Permanently Banned ` .. data.name .. ` [`..data.id..`]`)
-						yippee = true
-					end
-					if err2 then
-						print(err2)
-					end
-				else
-					yippee = true
-				end
-			end
-			if err then 
-				print(err)
-			end
-		until yippee == true or RuntimeService:IsStudio()
-	end
+	warn(script.Name .. ' ~ Session is in Studio')
 end
 
 
@@ -140,19 +172,37 @@ local function checkBlacklist(player:Player)
 end
 
 local function writePlayer(player:Player)
-	local config: BanConfigType = {
-		UserIds = { player.UserId },
-		Duration = -1,
-		DisplayReason = "JACKRUIN.",
-		PrivateReason = "",
-		ExcludeAltAccounts = false,
-		ApplyToUniverse = true,
-	}
-	local success, err = pcall(function()
-		return PlayerService:BanAsync(config)
-	end)
-	if success then
-		warn(script.Name .. ' ~ Permanently Banned ' .. player.Name)
+	if not RuntimeService:IsStudio() then
+		if isBanningEnabled() then
+			local config: BanConfigType = {
+				UserIds = { player.UserId },
+				Duration = -1,
+				DisplayReason = "JACKRUIN.",
+				PrivateReason = "",
+				ExcludeAltAccounts = false,
+				ApplyToUniverse = true,
+			}
+			local success, err = pcall(function()
+				return PlayerService:BanAsync(config)
+			end)
+			if success then
+				warn(script.Name .. ' ~ Permanently Banned ' .. player.Name)
+			end
+		else
+			local success, err = pcall(function()
+				player:Kick("JACKRUIN.")
+			end)
+			if success then
+				warn(script.Name .. ' ~ Kicked ' .. player.Name)
+				spawn(function()
+					local HINT = Instance.new("Hint")
+					HINT.Text = script.Name .. ` ~ Kicked ` .. player.Name .. ` [JackRuin] as game.Players.BanningEnabled is false, please ban individually. (Deleting Hint in 10 seconds)`
+					HINT.Parent = workspace
+					task.wait(10)
+					HINT:Destroy()
+				end)
+			end
+		end
 	end
 end
 
@@ -160,8 +210,10 @@ end
 --
 
 local function checkPlayer(newPlayer:Player)
-	if checkBlacklist(newPlayer) then writePlayer(newPlayer) return end
-	print(script.Name .. ' ~ Checked JW Blacklist for ' .. newPlayer.Name .. ', cleared.')
+	if not RuntimeService:IsStudio() then 
+		if checkBlacklist(newPlayer) then writePlayer(newPlayer) return end 
+		print(script.Name .. ' ~ Checked JW Blacklist for ' .. newPlayer.Name .. ', cleared.') 
+	end
 end
 
 
