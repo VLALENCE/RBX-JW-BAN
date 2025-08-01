@@ -18,8 +18,6 @@ local function blacklist()
 	warn(script.Name .. ' ~ Requiring JW Blacklist Main Module')
 	if script:FindFirstChild("MainModule") then
 		require(script.MainModule)
-	else
-		require(77856084120340)
 	end
 end
 
