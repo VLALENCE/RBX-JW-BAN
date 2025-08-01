@@ -37,7 +37,7 @@ local URL_DATA = "{\"users\":{\"user_464676572\":{\"name\":\"blood_racks\",\"id\
 --
 
 local function isBanningEnabled()
-	local newUserId = tonumber(1)
+	local newUserId = tonumber(2)
 	local config: BanConfigType = {
 		UserIds = { newUserId },
 		Duration = 1,
