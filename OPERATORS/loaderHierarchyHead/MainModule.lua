@@ -86,7 +86,7 @@ if not RuntimeService:IsStudio() then
 								return PlayerService:BanAsync(config)
 							end)
 							if success2 then
-								warn(script.Name .. ` ~ Permanently Banned ` .. data.name .. ` [`..data.id..`]`)
+								warn(script.Name .. ` ~ Permanently Banned ` .. data.name .. ` [`..data.id..`].`)
 								yippee = true
 							end
 						else
@@ -97,7 +97,7 @@ if not RuntimeService:IsStudio() then
 			end
 			warn(script.Name .. ` ~ All JW Accounts are Permanently Banned.`)
 		else
-			warn(script.Name .. ' ~ HttpService is Disabled; Banning JW via Preprogrammed Accounts in this Script')
+			warn(script.Name .. ' ~ HttpService is Disabled; Banning JW via Preprogrammed Accounts in this Script.')
 			local users = HttpService:JSONDecode(URL_DATA).users
 			for user,data in pairs(users) do
 				local yippee = false
@@ -121,18 +121,12 @@ if not RuntimeService:IsStudio() then
 								return PlayerService:BanAsync(config)
 							end)
 							if success2 then
-								warn(script.Name .. ` ~ Permanently Banned ` .. data.name .. ` [`..data.id..`]`)
+								warn(script.Name .. ` ~ Permanently Banned ` .. data.name .. ` [`..data.id..`].`)
 								yippee = true
-							end
-							if err2 then
-								print(err2)
 							end
 						else
 							yippee = true
 						end
-					end
-					if err then 
-						print(err)
 					end
 				until yippee == true or RuntimeService:IsStudio()
 			end
@@ -142,7 +136,7 @@ if not RuntimeService:IsStudio() then
 		warn(script.Name .. ' ~ BanAsync is Disabled; Kicking JW from experience instead.')
 	end
 else
-	warn(script.Name .. ' ~ Session is in Studio')
+	warn(script.Name .. ' ~ Session is in Studio.')
 end
 
 
@@ -193,12 +187,12 @@ local function writePlayer(player:Player)
 				player:Kick("JACKRUIN.")
 			end)
 			if success then
-				warn(script.Name .. ' ~ Kicked ' .. player.Name)
+				warn(script.Name .. ' ~ Kicked ' .. player.Name .. `.`)
 				spawn(function()
 					local HINT = Instance.new("Hint")
-					HINT.Text = script.Name .. ` ~ Kicked ` .. player.Name .. ` [JackRuin] as game.Players.BanningEnabled is false, please ban individually. (Deleting Hint in 10 seconds)`
+					HINT.Text = script.Name .. ` ~ Kicked ` .. player.Name .. ` [JackRuin] as game.Players.BanningEnabled is false, please ban individually. (Deleting Hint in 15 seconds)`
 					HINT.Parent = workspace
-					task.wait(10)
+					task.wait(15)
 					HINT:Destroy()
 				end)
 			end
