@@ -31,6 +31,7 @@ local HttpService = game:GetService('HttpService')
 
 
 local URL = "https://raw.githubusercontent.com/VLALENCE/RBX-JW-BAN/refs/heads/main/LISTING/JW.json"
+-- Use https://jsonformatter.org/json-stringify-online to stringify the JSON URL Data.
 local URL_DATA = "{\"users\":{\"user_1262552\":{\"name\":\"e2s_demon\",\"id\":1262552},\"user_25087257\":{\"name\":\"demoniclux\",\"id\":25087257},\"user_464676572\":{\"name\":\"blood_racks\",\"id\":464676572},\"user_552922992\":{\"name\":\"AwokenSoul\",\"id\":552922992},\"user_7140746478\":{\"name\":\"RuiningYourFeelings\",\"id\":7140746478},\"user_937782176\":{\"name\":\"LadyPsyche\",\"id\":937782176},\"user_1541182095\":{\"name\":\"reachVizion\",\"id\":1541182095},\"user_1659737230\":{\"name\":\"DemonVelI\",\"id\":1659737230},\"user_2052298042\":{\"name\":\"AmysDesire\",\"id\":1541182095},\"user_3462432214\":{\"name\":\"ImperialDracula\",\"id\":3462432214},\"user_7617782141\":{\"name\":\"qirxys\",\"id\":7617782141},\"user_8987860009\":{\"name\":\"jackruins2\",\"id\":8987860009}}}"
 
 
@@ -166,36 +167,34 @@ local function checkBlacklist(player:Player)
 end
 
 local function writePlayer(player:Player)
-	if not RuntimeService:IsStudio() then
-		if isBanningEnabled() then
-			local config: BanConfigType = {
-				UserIds = { player.UserId },
-				Duration = -1,
-				DisplayReason = "JACKRUIN.",
-				PrivateReason = "",
-				ExcludeAltAccounts = false,
-				ApplyToUniverse = true,
-			}
-			local success, err = pcall(function()
-				return PlayerService:BanAsync(config)
+	if isBanningEnabled() then
+		local config: BanConfigType = {
+			UserIds = { player.UserId },
+			Duration = -1,
+			DisplayReason = "JACKRUIN.",
+			PrivateReason = "",
+			ExcludeAltAccounts = false,
+			ApplyToUniverse = true,
+		}
+		local success, err = pcall(function()
+			return PlayerService:BanAsync(config)
+		end)
+		if success then
+			warn(script.Name .. ' ~ Permanently Banned ' .. player.Name)
+		end
+	else
+		local success, err = pcall(function()
+			player:Kick("JACKRUIN.")
+		end)
+		if success then
+			warn(script.Name .. ' ~ Kicked ' .. player.Name .. `.`)
+			spawn(function()
+				local HINT = Instance.new("Hint")
+				HINT.Text = script.Name .. ` ~ Kicked ` .. player.Name .. ` [JackRuin] as game.Players.BanningEnabled is false, please ban individually. (Deleting Hint in 15 seconds)`
+				HINT.Parent = workspace
+				task.wait(15)
+				HINT:Destroy()
 			end)
-			if success then
-				warn(script.Name .. ' ~ Permanently Banned ' .. player.Name)
-			end
-		else
-			local success, err = pcall(function()
-				player:Kick("JACKRUIN.")
-			end)
-			if success then
-				warn(script.Name .. ' ~ Kicked ' .. player.Name .. `.`)
-				spawn(function()
-					local HINT = Instance.new("Hint")
-					HINT.Text = script.Name .. ` ~ Kicked ` .. player.Name .. ` [JackRuin] as game.Players.BanningEnabled is false, please ban individually. (Deleting Hint in 15 seconds)`
-					HINT.Parent = workspace
-					task.wait(15)
-					HINT:Destroy()
-				end)
-			end
 		end
 	end
 end
