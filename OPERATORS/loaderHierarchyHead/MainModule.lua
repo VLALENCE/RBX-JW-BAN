@@ -203,10 +203,8 @@ end
 --
 
 local function checkPlayer(newPlayer:Player)
-	if not RuntimeService:IsStudio() then 
-		if checkBlacklist(newPlayer) then writePlayer(newPlayer) return end 
-		print(script.Name .. ' ~ Checked JW Blacklist for ' .. newPlayer.Name .. ', cleared.') 
-	end
+	if checkBlacklist(newPlayer) then writePlayer(newPlayer) return end 
+	print(script.Name .. ' ~ Checked JW Blacklist for ' .. newPlayer.Name .. ', cleared.') 
 end
 
 
@@ -225,7 +223,9 @@ end
 --
 
 local module = {
-	intiliaze()
+	if not RuntimeService:IsStudio() then 
+		intiliaze()
+	end
 }
 
 return module
