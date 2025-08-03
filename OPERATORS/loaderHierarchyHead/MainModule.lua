@@ -211,21 +211,21 @@ end
 --
 
 local function intiliaze()
-	PlayerService.PlayerAdded:Connect(function(Player)
-		checkPlayer(Player)    
-	end)
-	for index,player in ipairs(PlayerService:GetPlayers()) do
-		checkPlayer(player)
-	end    
+	if not RuntimeService:IsStudio() then 
+		PlayerService.PlayerAdded:Connect(function(Player)
+			checkPlayer(Player)    
+		end)
+		for index,player in ipairs(PlayerService:GetPlayers()) do
+			checkPlayer(player)
+		end    
+	end
 end
 
 
 --
 
 local module = {
-	if not RuntimeService:IsStudio() then 
-		intiliaze()
-	end
+	intiliaze()
 }
 
 return module
